@@ -19,11 +19,11 @@
 <body>
     <h1>欢迎管理员：${sessionScope.nowadmin.aname},登录后台管理！</h1>
     <br>
-
-    <h2><a href="selectteacher">查看教师信息</a></h2>
+<center>
+    <h2 style="border: red"><a href="selectteacher">查看教师信息</a></h2>
     <h2><a href="selectculum">查看课程信息</a></h2>
     <h2><a href="selectLaborad">查看实验室</a></h2>
     <h2><a href="selectOrder">查看预约详情</a></h2>
-
+</center>
 </body>
 </html>

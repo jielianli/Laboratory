@@ -17,7 +17,7 @@
     <title>Title</title>
 </head>
 <body>
-    <h1>欢迎管理员：${sessionScope.nowadmin.aname},登录后台管理！</h1>
+    <h1>欢迎管理员：${sessionScope.nowadmin.aname},登录后台管理！欢迎欢迎</h1>
     <br>
 <center>
     <h2 style="border: red"><a href="selectteacher">查看教师信息</a></h2>

@@ -16,97 +16,274 @@
 %>
 <html>
 <head>
-    <base href="<%=basePath %>"/>
-    <title>Title</title>
-
-    <% String l=(String)request.getParameter("lbuilding");%>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>网上实验室预约系统</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="css/home.css">
 </head>
-<body>
-<center>
-    <form action="orderAdd" method="post">
-        教学楼:
-        <select name="lbuilding" style="width:180px;height:30px">
-            <option value="0" selected="selected">请选择教学楼</option>
-                <%
-                //连接数据库
-                Connection connection = null;
-                PreparedStatement preparedStatement = null;
-                ResultSet resultSet = null;
-                connection= DBcoon.getcoon();
-                String sql="SELECT lbuilding FROM laboratory ";
-                preparedStatement = connection.prepareStatement(sql);
-                resultSet = preparedStatement.executeQuery();
-                while (resultSet != null && resultSet.next()) {
-                    out.print("<option value="+resultSet.getString(1)+">"+resultSet.getString(1)+"</option>");
-                }
-            %>
-        </select><br> &nbsp;
-        教室:
-            <select  name="lclassroom" style="width:180px;height:30px">
-                <option value="0" selected="selected1">请选择教室</option>
-                    <%
-                //连接数据库
-                Connection connection1 = null;
-                PreparedStatement preparedStatement1 = null;
-                ResultSet resultSet1 = null;
-                connection1= DBcoon.getcoon();
-                String sql1="SELECT lclassroom FROM laboratory";
-                preparedStatement1 = connection1.prepareStatement(sql1);
-                resultSet1 = preparedStatement1.executeQuery();
-                while (resultSet1 != null && resultSet1.next()) {
-                    out.print("<option value="+resultSet1.getString(1)+">"+resultSet1.getString(1)+"</option>");
-                }
-            %>
-            </select><br> &nbsp;
-        <input type="hidden" name="orderDate" value=""><br> &nbsp;
-                起始时间<input type="date" value="" name="starttime">
-                ~~~
-                结束时间：<input type="date" value="" name="endtime"><br> &nbsp;
-        星期：
-        <select name="cuweek" >
-            <option value="">请选择</option>
-            <option value="星期一">星期一</option>
-            <option value="星期二">星期二</option>
-            <option value="星期三">星期三</option>
-            <option value="星期四">星期四</option>
-            <option value="星期五">星期五</option>
-            <option value="星期六">星期六</option>
-            <option value="星期日">星期日</option>
-        </select><br> &nbsp;
-        上课时间段：
-        <select name="cusection">
-            <option value="" >请选择</option>
-            <option value="8：00~10：00">8：00~10：00</option>
-            <option value="10：00~12：00">10：00~12：00</option>
-            <option value="14：00~15：40">14：00~15：40</option>
-            <option value="16：00~17：40">16：00~17：40</option>
-            <option value="18：30~20：10">18：30~20：10</option>
-        </select><br> &nbsp;
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header" style="background-color: #20222A">
+        <div class="layui-logo"
+             style="background-color: #393D49;color: white;height: 210px;border-bottom: 1px solid white">
+            <div style="background-color: #393D49;color: #009E94;font-weight: bolder">网上实验室预约系统</div>
+            <div style="font-size: 10px;text-align: center;height: 15px;margin-bottom: 8px;padding-right: 6px">
+                欢迎,"${sessionScope.nowadmin.aname}"
+            </div>
+            <div style="font-size: 10px;padding-right: 10px">
+                登录本系统
+            </div>
+        </div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item"><a href="#" id="refresh">
+                <i class="layui-icon layui-icon-refresh"></i></a>
+            </li>
 
-        课程名字:
-                <select id="" name="cuname" style="width:180px;height:30px">
-                    <option value="0" selected="selected">请选择课程</option>
-                        <%
-                //连接数据库
-                Connection connection2 = null;
-                PreparedStatement preparedStatement2 = null;
-                ResultSet resultSet2 = null;
-                connection2= DBcoon.getcoon();
-                String sql2="SELECT cuname FROM curriculum ";
-                preparedStatement2 = connection2.prepareStatement(sql2);
-                resultSet2 = preparedStatement2.executeQuery();
-                while (resultSet2 != null && resultSet2.next()) {
-                    out.print("<option value="+resultSet2.getString(1)+">"+resultSet2.getString(1)+"</option>");
-                }
-            %></select><br> &nbsp;
-        项目名称:<input type="text" name="cuproject" value=""><br>&nbsp;
-        班级:<input type="text" name="cuclass" value=""><br>&nbsp;
-        人数:<input type="text" name="cunumber" value=""><br> &nbsp;
-        描述:
-        <textarea name="cudescribe"  cols="30" rows="5">
-        </textarea><br>&nbsp;
-        <input  type="submit" value="确认添加">
-    </form>
-</center>
+
+            <li class="layui-nav-item"><a href="loginA.jsp" onclick="clearCookie()" id="logout"><i
+                    class="layui-icon layui-icon-logout"></i>退出</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black" style="padding-top: 150px">
+        <div class="layui-side-scroll">
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+
+                <li class="layui-nav-item" style="text-align: center">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-username"></i>教师信息</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="teacheradd.jsp"   data-id="10" data-title="添加教师"
+                               class="site-demo-active">
+                                <i class="layui-icon layui-icon-table"></i> 添加教师
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="selectteacher"  data-id="11" data-title="查看教师"
+                               class="site-demo-active">
+                                <i class="layui-icon layui-icon-table"></i> 查看教师
+                            </a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item" style="text-align: center">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-read"></i>课程管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="culumadd.jsp" data-url="https://www.xxx.com/" data-id="10" data-title="添加课程"
+                               class="site-demo-active">
+                                <i class="layui-icon layui-icon-table"></i> 添加课程
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="selectculum" data-url="https://www.xxx.com/" data-id="11" data-title="查看课程"
+                               class="site-demo-active">
+                                <i class="layui-icon layui-icon-table"></i> 查看课程
+                            </a>
+                        </dd>
+                    </dl>
+                </li>
+
+                <li class="layui-nav-item" style="text-align: center">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-table"></i> 实验室管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="selectLaborad" data-url="https://www.xxx.com/" data-id="7" data-title="实验室详情"
+                               class="site-demo-active">
+                            <i class="layui-icon layui-icon-table"></i> 实验室详情
+                        </a>
+                        </dd>
+                        <dd>
+                            <a href="laboratoryadd.jsp" data-url="https://www.xxx.com/" data-id="8" data-title="添加实验室"
+                               class="site-demo-active">
+                                <i class="layui-icon layui-icon-table"></i> 添加实验室
+                            </a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item" style="text-align: center">
+                    <a href="javascript:;"><i class="layui-icon layui-icon-chart-screen"></i>预约管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="orderadd.jsp" data-url="https://www.xxx.com/" data-id="10" data-title="添加预约"
+                               class="site-demo-active">
+                                <i class="layui-icon layui-icon-table"></i> 添加预约
+                            </a>
+                        </dd>
+                        <dd>
+                            <a href="selectOrder" data-url="https://www.xxx.com/" data-id="11" data-title="查看预约"
+                               class="site-demo-active">
+                                <i class="layui-icon layui-icon-table"></i> 查看预约
+                            </a>
+                        </dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body"
+         style="background: url(img/bodyBg.jpg) no-repeat ;background-size: 100% 100%    ">
+        <!-- 内容主体区域 -->
+        <div class="layui-tab layui-tab-card" lay-filter="demo" lay-allowclose="true" style="">
+            <ul class="layui-tab-title" style="background-color: rgba(255,255,255,0.1)">
+                <li class="layui-this" lay-id="0"><i style="font-size: smaller"
+                                                     class="layui-icon layui-icon-circle-dot"></i>首页
+                </li>
+            </ul>
+        </div>
+
+        <% String l=(String)request.getParameter("lbuilding");%>
+
+        <form action="orderAdd" method="post" >
+            <table  border="1"  style="width: 80%; height: 80%; margin-left:100px;">
+                <tr>
+                    <td>教学楼</td>
+                    <td>
+                        <select name="lbuilding" style="width:180px;height:30px">
+                            <option value="0" selected="selected">请选择教学楼</option>
+                            <%
+                                //连接数据库
+                                Connection connection = null;
+                                PreparedStatement preparedStatement = null;
+                                ResultSet resultSet = null;
+                                connection= DBcoon.getcoon();
+                                String sql="SELECT lbuilding FROM laboratory ";
+                                preparedStatement = connection.prepareStatement(sql);
+                                resultSet = preparedStatement.executeQuery();
+                                while (resultSet != null && resultSet.next()) {
+                                    out.print("<option value="+resultSet.getString(1)+">"+resultSet.getString(1)+"</option>");
+                                }
+                            %>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td> 教室:</td>
+                    <td>
+                        <select  name="lclassroom" style="width:180px;height:30px">
+                            <option value="0" selected="selected1">请选择教室</option>
+                            <%
+                                //连接数据库
+                                Connection connection1 = null;
+                                PreparedStatement preparedStatement1 = null;
+                                ResultSet resultSet1 = null;
+                                connection1= DBcoon.getcoon();
+                                String sql1="SELECT lclassroom FROM laboratory";
+                                preparedStatement1 = connection1.prepareStatement(sql1);
+                                resultSet1 = preparedStatement1.executeQuery();
+                                while (resultSet1 != null && resultSet1.next()) {
+                                    out.print("<option value="+resultSet1.getString(1)+">"+resultSet1.getString(1)+"</option>");
+                                }
+                            %>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>起始时间~~结束时间:</td>
+                    <td>
+                        <input type="hidden" name="orderDate" value="">
+                        <input type="date" value="" name="starttime">
+                        ~~
+                        <input type="date" value="" name="endtime">
+                    </td>
+                </tr>
+                <tr>
+                    <td> 星期：</td>
+                    <td>
+                        <select name="cuweek" >
+                            <option value="">请选择</option>
+                            <option value="星期一">星期一</option>
+                            <option value="星期二">星期二</option>
+                            <option value="星期三">星期三</option>
+                            <option value="星期四">星期四</option>
+                            <option value="星期五">星期五</option>
+                            <option value="星期六">星期六</option>
+                            <option value="星期日">星期日</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td> 上课时间段：</td>
+                    <td>
+                        <select name="cusection">
+                            <option value="" >请选择</option>
+                            <option value="8：00~10：00">8：00~10：00</option>
+                            <option value="10：00~12：00">10：00~12：00</option>
+                            <option value="14：00~15：40">14：00~15：40</option>
+                            <option value="16：00~17：40">16：00~17：40</option>
+                            <option value="18：30~20：10">18：30~20：10</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>课程名字</td>
+                    <td>
+                        <select id="" name="cuname" style="width:180px;height:30px">
+                            <option value="0" selected="selected">请选择课程</option>
+                            <%
+                                //连接数据库
+                                Connection connection2 = null;
+                                PreparedStatement preparedStatement2 = null;
+                                ResultSet resultSet2 = null;
+                                connection2= DBcoon.getcoon();
+                                String sql2="SELECT cuname FROM curriculum ";
+                                preparedStatement2 = connection2.prepareStatement(sql2);
+                                resultSet2 = preparedStatement2.executeQuery();
+                                while (resultSet2 != null && resultSet2.next()) {
+                                    out.print("<option value="+resultSet2.getString(1)+">"+resultSet2.getString(1)+"</option>");
+                                }
+                            %></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>项目名称</td>
+                    <td>
+                        <input type="text" name="cuproject" value="">
+                    </td>
+                </tr>
+                <tr>
+                    <td>班级</td>
+                    <td>
+                        <input type="text" name="cuclass" value="">
+                    </td>
+                </tr>
+                <tr>
+                    <td>人数</td>
+                    <td>
+                        <input type="text" name="cunumber" value="">
+                    </td>
+                </tr>
+                <tr>
+                    <td>描述</td>
+                    <td>
+                        <textarea name="cudescribe"  cols="30" rows="5"></textarea>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="3">
+                        <input type="submit" value="提交">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        <div style="text-align: center">
+            <!-- © 欢迎交流讨论 -->
+        </div>
+    </div>
+</div>
+<script src="js/jquery-3.3.1.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/home.js"></script>
+<style>
+    .copyrights{text-indent:-9999px;height:0;line-height:0;font-size:0;overflow:hidden;}
+</style>
 </body>
 </html>

@@ -1,6 +1,7 @@
 package com.gy.Dao;
 
 import com.gy.Bean.Admin;
+import com.gy.Bean.Page;
 import com.gy.Bean.Teacher;
 
 import java.sql.Connection;
@@ -40,6 +41,56 @@ public class TeacherDao {
         DBcoon.close(connection, preparedStatement, resultSet);
         return list;
     }
+
+
+
+    public List selectAllPage(Page page) throws SQLException, ClassNotFoundException {
+        //2
+        List<Teacher> list=new ArrayList<>();
+        connection =DBcoon.getcoon();
+        //偏移量
+        String sql="select * from teacher limit ?,?";
+        preparedStatement=connection.prepareStatement(sql);
+        //1-1*10=0  2-1*10=10从10后面取
+        preparedStatement.setInt(1,(page.getPageNum()-1)*page.getPageSize());
+        preparedStatement.setInt(2,page.getPageSize());
+        resultSet = preparedStatement.executeQuery();
+        while (resultSet != null && resultSet.next()) {
+            Teacher teacher = new Teacher(resultSet.getInt("tid"),
+                    resultSet.getString("tname"),
+                    resultSet.getString("trueName"),
+                    resultSet.getString("tpass"),
+                    resultSet.getString("tdepartment"),
+                    resultSet.getString("contact"));
+            list.add(teacher);
+        }
+        //3
+        return  list;
+    }
+
+
+    public int selectTotal() throws SQLException, ClassNotFoundException {
+        //2
+        int pageTotal=0;
+        connection =DBcoon.getcoon();
+        //偏移量
+        String sql="select count(*) as pageTotal from teacher";
+        preparedStatement=connection.prepareStatement(sql);
+        resultSet = preparedStatement.executeQuery();
+        while (resultSet!=null&&resultSet.next()){
+            pageTotal=resultSet.getInt("pageTotal");
+        }
+        //3
+        return  pageTotal;
+    }
+
+
+
+
+
+
+
+
 
     public Teacher selectByID(int tid) throws SQLException, ClassNotFoundException {
         Teacher teacher = new Teacher();
@@ -90,7 +141,7 @@ public class TeacherDao {
 
         DBcoon.close(connection,preparedStatement,resultSet);
     }
-    //修改商品
+
     public  void  update(Teacher teacher) throws SQLException, ClassNotFoundException {
         //·1获取连接
         connection=DBcoon.getcoon();

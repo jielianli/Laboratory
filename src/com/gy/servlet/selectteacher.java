@@ -1,5 +1,6 @@
 package com.gy.servlet;
 
+import com.gy.Bean.Page;
 import com.gy.Bean.Teacher;
 import com.gy.Dao.TeacherDao;
 
@@ -24,12 +25,25 @@ import java.util.List;
 public class selectteacher extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String pageNumStr = req.getParameter("pageNum");
+
+        Page page=new Page();
+        if(pageNumStr!=null&&!pageNumStr.equals("")){
+            int pageNum=Integer.parseInt(pageNumStr);
+            page.setPageNum(pageNum);//页码数
+        }
+
         TeacherDao teacherDao=new TeacherDao();
         try {
             //调用查询方法
-            List<Teacher> list = teacherDao.selectAll();
-            //把集合存入request，转发到页面可以取出来
+            List<Teacher> list = teacherDao.selectAllPage(page);
 
+            //查询总条数
+            int pageTotal = teacherDao.selectTotal();
+            page.setPageTotal(pageTotal);
+
+            //把集合存入request，转发到页面可以取出来
+            req.setAttribute("p",page);
             req.setAttribute("teacherlist",list);
             //转到jsp,固定方法getRequestDispatcher
             req.getRequestDispatcher("teacherall.jsp").forward(req,resp);

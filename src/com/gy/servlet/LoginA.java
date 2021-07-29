@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * 类名：LoginA
@@ -34,6 +35,7 @@ public class LoginA  extends HttpServlet {
         try {
             //调用查询方法，将用户名与密码传过去
             admin = adminDao.select(aname, apass);
+
             if(admin!=null){
                 HttpSession session = req.getSession();
                 session.setAttribute("nowadmin",admin);

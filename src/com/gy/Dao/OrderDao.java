@@ -1,6 +1,7 @@
 package com.gy.Dao;
 
 import com.gy.Bean.Ordertable;
+import com.gy.Bean.Page;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -51,6 +52,61 @@ public class OrderDao {
         DBcoon.close(connection, preparedStatement, resultSet);
         return list;
     }
+
+
+    public List selectAllPage(Page page) throws SQLException, ClassNotFoundException {
+        //2
+        List<Ordertable> list=new ArrayList<>();
+        connection =DBcoon.getcoon();
+        //偏移量
+        String sql="select * from ordertable limit ?,?";
+
+        preparedStatement=connection.prepareStatement(sql);
+        //1-1*10=0  2-1*10=10从10后面取
+        preparedStatement.setInt(1,(page.getPageNum()-1)*page.getPageSize());
+        preparedStatement.setInt(2,page.getPageSize());
+        resultSet = preparedStatement.executeQuery();
+        while (resultSet != null && resultSet.next()) {
+            Ordertable ordertable = new Ordertable(
+                    resultSet.getInt("oid"),
+                    resultSet.getInt("tid"),
+                    resultSet.getString("lbuilding"),
+                    resultSet.getString("lclassroom"),
+                    resultSet.getString("orderDate"),
+                    resultSet.getString("starttime"),
+                    resultSet.getString("endtime"),
+                    resultSet.getString("cuweek"),
+                    resultSet.getString("cusection"),
+                    resultSet.getString("cuname"),
+                    resultSet.getString("cuproject"),
+                    resultSet.getString("cuclass"),
+                    resultSet.getInt("cunumber"),
+                    resultSet.getString("cudescribe"),
+                    resultSet.getString("state")
+            );
+            list.add(ordertable);
+        }
+        //3
+        return  list;
+    }
+
+
+    public int selectTotal() throws SQLException, ClassNotFoundException {
+        //2
+        int pageTotal=0;
+        connection =DBcoon.getcoon();
+        //偏移量
+        String sql="select count(*) as pageTotal from ordertable";
+        preparedStatement=connection.prepareStatement(sql);
+        resultSet = preparedStatement.executeQuery();
+        while (resultSet!=null&&resultSet.next()){
+            pageTotal=resultSet.getInt("pageTotal");
+        }
+        //3
+        return  pageTotal;
+    }
+
+
     public Ordertable selectByID(int oid) throws SQLException, ClassNotFoundException {
         Ordertable ordertable = new Ordertable();
         connection = DBcoon.getcoon();

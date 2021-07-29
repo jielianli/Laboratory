@@ -1,6 +1,7 @@
 package com.gy.servlet;
 
 import com.gy.Bean.Laboratory;
+import com.gy.Bean.Page;
 import com.gy.Dao.LaboratoryDao;
 
 import javax.servlet.ServletException;
@@ -24,15 +25,25 @@ import java.util.List;
 public class LaboratoryT extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String pageNumStr = req.getParameter("pageNum");
+
+        Page page=new Page();
+        if(pageNumStr!=null&&!pageNumStr.equals("")){
+            int pageNum=Integer.parseInt(pageNumStr);
+            page.setPageNum(pageNum);//页码数
+        }
+
+
         LaboratoryDao laboratoryDao=new LaboratoryDao();
         try {
             //调用查询方法
-            List<Laboratory> list = laboratoryDao.selectL();
-
+            List<Laboratory> list = laboratoryDao.selectAllPage(page);
+            int pageTotal = laboratoryDao.selectTotal();
+            page.setPageTotal(pageTotal);
             System.out.println("111"+list);
             //把集合存入request，转发到页面可以取出来
 //            req.setAttribute("laboratory",list);
-
+            req.setAttribute("p",page);
             HttpSession session = req.getSession();
             //使用session封装起来，以便之后取。
             session.setAttribute("laboratoryT", list);

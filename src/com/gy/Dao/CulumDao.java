@@ -1,6 +1,7 @@
 package com.gy.Dao;
 
 import com.gy.Bean.Curriculum;
+import com.gy.Bean.Page;
 
 import javax.print.attribute.SetOfIntegerSyntax;
 import java.sql.Connection;
@@ -45,6 +46,57 @@ public class CulumDao {
         DBcoon.close(connection, preparedStatement, resultSet);
         return list;
     }
+
+
+    public List selectAllPage(Page page) throws SQLException, ClassNotFoundException {
+        //2
+        List<Curriculum> list=new ArrayList<Curriculum>();
+        connection =DBcoon.getcoon();
+        //偏移量
+        String sql="select * from curriculum limit ?,?";
+
+        preparedStatement=connection.prepareStatement(sql);
+        //1-1*10=0  2-1*10=10从10后面取
+        preparedStatement.setInt(1,(page.getPageNum()-1)*page.getPageSize());
+        preparedStatement.setInt(2,page.getPageSize());
+        resultSet = preparedStatement.executeQuery();
+
+        while (resultSet!=null&&resultSet.next()){
+            Curriculum curriculum = new Curriculum(resultSet.getInt("cuid"),
+                    resultSet.getInt("tid"),
+                    resultSet.getString("cuname"),
+                    resultSet.getString("cuclassroom"),
+                    resultSet.getString("cuclass"),
+                    resultSet.getString("trueName"),
+                    resultSet.getString("starttime"),
+                    resultSet.getString("endtime"),
+                    resultSet.getString("cuweek"),
+                    resultSet.getString("cusection"));
+            list.add(curriculum);
+        }
+        //3
+        return  list;
+    }
+
+
+    public int selectTotal() throws SQLException, ClassNotFoundException {
+        //2
+        int pageTotal=0;
+        connection =DBcoon.getcoon();
+        //偏移量
+        String sql="select count(*) as pageTotal from curriculum";
+        preparedStatement=connection.prepareStatement(sql);
+        resultSet = preparedStatement.executeQuery();
+        while (resultSet!=null&&resultSet.next()){
+            pageTotal=resultSet.getInt("pageTotal");
+        }
+        //3
+        return  pageTotal;
+    }
+
+
+
+
 
     public Curriculum selectByID(int cuid) throws SQLException, ClassNotFoundException {
         Curriculum curriculum = new Curriculum();

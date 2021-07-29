@@ -1,6 +1,7 @@
 package com.gy.Dao;
 
 import com.gy.Bean.Laboratory;
+import com.gy.Bean.Page;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -42,6 +43,55 @@ public class LaboratoryDao {
         DBcoon.close(connection, preparedStatement, resultSet);
         return list;
     }
+
+
+    public List selectAllPage(Page page) throws SQLException, ClassNotFoundException {
+        //2
+        List<Laboratory> list=new ArrayList<Laboratory>();
+        connection =DBcoon.getcoon();
+        //偏移量
+        String sql="select * from laboratory limit ?,?";
+
+        preparedStatement=connection.prepareStatement(sql);
+        //1-1*10=0  2-1*10=10从10后面取
+        preparedStatement.setInt(1,(page.getPageNum()-1)*page.getPageSize());
+        preparedStatement.setInt(2,page.getPageSize());
+        resultSet = preparedStatement.executeQuery();
+        while (resultSet != null && resultSet.next()) {
+            Laboratory laboratory = new Laboratory(resultSet.getInt("lid"),
+                    resultSet.getString("lbuilding"),
+                    resultSet.getString("lclassroom"),
+                    resultSet.getInt("laccommodate"),
+                    resultSet.getString("lfree"),
+                    resultSet.getString("lremarks"),
+                    resultSet.getString("roomstate")
+            );
+            list.add(laboratory);
+        }
+        //3
+        return  list;
+    }
+
+
+    public int selectTotal() throws SQLException, ClassNotFoundException {
+        //2
+        int pageTotal=0;
+        connection =DBcoon.getcoon();
+        //偏移量
+        String sql="select count(*) as pageTotal from laboratory";
+        preparedStatement=connection.prepareStatement(sql);
+        resultSet = preparedStatement.executeQuery();
+        while (resultSet!=null&&resultSet.next()){
+            pageTotal=resultSet.getInt("pageTotal");
+        }
+        //3
+        return  pageTotal;
+    }
+
+
+
+
+
 
     public Laboratory selectByID(int lid) throws SQLException, ClassNotFoundException {
         Laboratory laboratory = new Laboratory();

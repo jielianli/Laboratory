@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 /**
  * 类名：culumUpdate
  * 描述：人生苦短，及时行乐
- * 作者：王金星
+ * 作者：劫恋李
  * 日期：2021/5/5 22:48
  * 版本：V1.0
  */

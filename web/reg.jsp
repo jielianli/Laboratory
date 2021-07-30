@@ -68,6 +68,12 @@
                             <input type="password" name="tpass1" id="tpass1" class="txt"/>
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            <input  type="submit" value="立即注册">
+                        </td>
+                    </tr>
+
             </table>
             </form>
         </div>

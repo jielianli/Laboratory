@@ -3,7 +3,7 @@
 <%@ page import="java.sql.ResultSet" %>
 <%@ page import="com.gy.Dao.DBcoon" %>
 <%@ page import="com.gy.Bean.Teacher" %><%--
-  Created by 王金星
+  Created by 劫恋李
   User: dell
   Date: 2021/5/5
   Time: 18:40

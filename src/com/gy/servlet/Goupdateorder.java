@@ -14,7 +14,7 @@ import java.sql.SQLException;
 /**
  * 类名：Goupdateorder
  * 描述：人生苦短，及时行乐
- * 作者：王金星
+ * 作者：劫恋李
  * 日期：2021/5/11 22:52
  * 版本：V1.0
  */

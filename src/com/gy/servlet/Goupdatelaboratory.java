@@ -14,7 +14,7 @@ import java.sql.SQLException;
 /**
  * 类名：Goupdatelaboratory
  * 描述：人生苦短，及时行乐
- * 作者：王金星
+ * 作者：劫恋李
  * 日期：2021/5/11 11:29
  * 版本：V1.0
  */
